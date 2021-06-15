@@ -12,4 +12,4 @@ Stripe Checkout is the fastest way to get started with payments. Included are so
 
 ```npm start```
 
-3. Go to [localhost:4242/checkout.html](localhost:4242/checkout.html/)
+3. Go to [localhost:3000](localhost:3000)
