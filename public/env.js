@@ -189,7 +189,7 @@ window.env = {
   "npm_package_dependencies__stripe_stripe_js": "^1.0.0",
   "npm_package_description": "Stripe Checkout is the fastest way to get started with payments. Included are some basic build and run scripts you can use to start up the application.",
   "npm_package_eslintConfig_extends": "react-app",
-  "npm_package_gitHead": "dfef534ba42ba9f53c9444746c14e0ccf4f2969d",
+  "npm_package_gitHead": "cca78c7b2b00b8c5497aa1764fa5188fe55ead25",
   "npm_package_homepage": "http://localhost:3000/checkout",
   "npm_package_name": "stripe-sample",
   "npm_package_proxy": "http://localhost:4242",
