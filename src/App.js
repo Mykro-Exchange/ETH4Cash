@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { loadStripe } from "@stripe/stripe-js";
 import "./App.css";
-// Make sure to call `loadStripe` outside of a component’s render to avoid
-// recreating the `Stripe` object on every render.
-const stripePromise = loadStripe("pk_test_51IzEK9LptijJjsCh3eLpknxC2Ll6Ej1CN71beUPROGkz0ksjUHlDPv1aifOdaGcnvxa6bjK7UzhQmGChW2raijEt00VvJWsQ65");
+import env from "react-dotenv";
+const axios = require('axios').default;
+
+
+const stripePromise = loadStripe(env.PK);
 
 const ProductDisplay = ({ handleClick,price }) => (
   <section>
@@ -28,16 +30,26 @@ const Message = ({ message }) => (
 );
 
 
-// Note: the empty deps array [] means
-// this useEffect will run once
-// similar to componentDidMount()
-  
+const jwt = 'secret'
+let iv = 'noethaddyetgiven'
+
+const ethAddressSubmit =  async ()=>{
+    try {
+        const resp = await axios.get(`http://127.0.0.1:5000/send_eth/${iv}/${jwt}`);
+        console.log(resp.data);
+    } catch (err) {
+        // Handle Error Here
+        console.error(err);
+    }
+};
+
   export default function App() {
   const [error, setError] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
-  const [items, setItems] = useState([]);
-  const [ethPrice, setPrice] = useState(0);
+  // const [items, setItems] = useState([]);
+  const [ethPrice, setPrice] = useState(2569.42);
   const [message, setMessage] = useState("");
+  const [input, setInput] = useState(''); 
 
 const getEthPrice = ()=>{
   fetch("https://min-api.cryptocompare.com/data/price?fsym=ETH&tsyms=USD")
@@ -49,46 +61,51 @@ const getEthPrice = ()=>{
         setPrice(price);
         console.log(price)
       },
-      // Note: it's important to handle errors here
-      // instead of a catch() block so that we don't swallow
-      // exceptions from actual bugs in components.
       (error) => {
         setIsLoaded(true);
         setError(error);
       }
       )
 }
-getEthPrice()
-setInterval(() => {
-  
-  getEthPrice()
-}, 5000);
+const eth_address_input = (evt) => { 
+  let inputVal = evt.target.value
+  setInput(inputVal)
+  iv = inputVal
+  console.log(iv)
+}
+
+
+
   useEffect(() => {
-    
+    getEthPrice()
+      const interval = setInterval(() => getEthPrice(), 2000);
+     
     // Check to see if this is a redirect back from Checkout
     const query = new URLSearchParams(window.location.search);
 
     if (query.get("success")) {
+      clearInterval(interval);
+
       setMessage( <section>
-        <div>
-          
+                  <label>
+
+                  {input}
+                  </label>
                 <p>
                   Order Placed, Please confirm your Ethereum address for deposit.
+                  <input  onChange={eth_address_input} />
                 </p>
-                <a href='http://localhost:3000' style={{ textDecoration: 'none', color:'white' }}> 
-                <button type="button" id="checkout-button" role="link">
+                <button type="button" id="checkout-button" onClick={ethAddressSubmit}>
                 Go Back to Cash 4 ETH
               </button>
-                </a>
-        </div>
                 </section>);
     }
 
     if (query.get("canceled")) {
+      clearInterval(interval);
+
       setMessage(
         <section>
-<div>
-  
         <p>
           Order canceled, we are always here for you.
         </p>
@@ -97,11 +114,11 @@ setInterval(() => {
         Go Back to Cash 4 ETH
       </button>
         </a>
-</div>
         </section>
       );
     }
   }, []);
+
 
   const handleClick = async (event) => {
     const stripe = await stripePromise;
