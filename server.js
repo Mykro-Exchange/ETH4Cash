@@ -1,4 +1,5 @@
-const stripe = require('stripe')('sk_test_51IzEK9LptijJjsCh4OwX9pTZ11aYcetqAmjyipIVlzradPsK45oaVzJkeYgrpk1rPrnekVpRwxKlMmVjPGJW2HQc00CatfPw6L');
+require('dotenv').config()
+const stripe = require('stripe')(process.env.SK);
 const express = require('express');
 const app = express();
 app.use(express.static('.'));
@@ -38,6 +39,7 @@ app.post('/create-checkout-session', async (req, res) => {
     cancel_url: `${YOUR_DOMAIN}?canceled=true`,
   });
   console.log(session)
+  //TODO send this back as encrypted JWT to confirm transaction with stripe API in W3 ETH sender
   res.json({ id: session.id });
 });
 
